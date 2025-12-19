@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: linkedin_ocr_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434/api/generate}
+      - MCP_SERVER_URL=http://mcp_server:9000/api/v1/sheet_upload
+    depends_on:
+      - mcp_server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mcp_server:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: linkedin_ocr_mcp_server
+    command: uvicorn mcp_server:app --host 0.0.0.0 --port 9000
+    ports:
+      - "9000:9000"
+    environment:
+      - GOOGLE_CREDENTIALS_FILE=credentials.json
+    volumes:
+      - ./backend/credentials.json:/app/credentials.json
+
+  frontend:
+    build:
+      context: ./project
+      dockerfile: Dockerfile
+    container_name: linkedin_ocr_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

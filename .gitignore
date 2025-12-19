@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# MacOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Node (if any node_modules allowed in root, though they are in project/)
+node_modules/
+npm-debug.log
+
+# Project specific
+backend/credentials.json
